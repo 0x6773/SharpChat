@@ -37,8 +37,8 @@ namespace SharpChatConsoleClient
             while (true)
             {
                 string outString = Console.ReadLine();
-                byte[] outStream = Encoding.ASCII.GetBytes(outString + "$");
-                Console.WriteLine(" > " + outString);
+                byte[] outStream = Encoding.ASCII.GetBytes(" > " + outString + "$");
+                Console.WriteLine(outString);
 
                 networkStream.Write(outStream, 0, outStream.Length);
             }
