@@ -13,16 +13,20 @@ namespace SharpChatConsoleClient
 		static void Main(string[] args)
 		{
 			Console.Write("Enter IP to Connect to Server : ");
-			String serverIPString = Console.ReadLine();
+			String serverIPString = "10.8.101.4";// Console.ReadLine();
 			
-			Console.Write("Enter Port to Connect to Server : ");
-			String serverPortString = Console.ReadLine();
+			Console.Write("\nEnter Port to Connect to Server : ");
+			String serverPortString = "6969";//Console.ReadLine();
 			
 			TcpClient clientSocket = new TcpClient();
 			clientSocket.Connect(serverIPString, Int32.Parse(serverPortString));
-			Console.WriteLine("Connected to Server!");
-			
+			Console.WriteLine("\nConnected to Server!");
 			networkStream = clientSocket.GetStream();
+			
+			String MachineName = Environment.MachineName;
+			
+			byte[] MNStream = Encoding.ASCII.GetBytes(MachineName + "$");
+			networkStream.Write(MNStream, 0, MNStream.Length);
 			
 			Thread t1 = new Thread(ServerChat);
 			t1.Start();
@@ -36,8 +40,12 @@ namespace SharpChatConsoleClient
 			while (true)
 			{
 				string outString = Console.ReadLine();
-				byte[] outStream = Encoding.ASCII.GetBytes(" > " + outString + "$");
-				Console.WriteLine(outString);
+				
+				Console.SetCursorPosition(0, Console.CursorTop - 1);
+				Console.WriteLine(" > Me : "+outString);
+				
+				outString = " > " + Environment.MachineName + " : " + outString;
+				byte[] outStream = Encoding.ASCII.GetBytes(outString + "$");
 				
 				networkStream.Write(outStream, 0, outStream.Length);
 			}
@@ -55,7 +63,7 @@ namespace SharpChatConsoleClient
 				inString = Encoding.ASCII.GetString(inStream);
 				inString = inString.Substring(0, inString.IndexOf('$'));
 				
-				Console.WriteLine(" > Server : " + inString);
+				Console.WriteLine(inString);
 			}
 		}
 	}
