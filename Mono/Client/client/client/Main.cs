@@ -1,3 +1,12 @@
+﻿/*
+ *  SharpChat Console for Client
+ *  https://github.com/mafiya69/SharpChat.git
+ * 
+ * Copyright (c) 2015 Govind Sahai (mafiya69)
+ * Licensed under the MIT license.
+ * 
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +16,7 @@ using System.Threading;
 
 namespace SharpChatConsoleClient
 {
-	class Program
+	class Client
 	{
 		static NetworkStream networkStream = null;
 		
@@ -24,10 +33,10 @@ namespace SharpChatConsoleClient
 			
 			
 			Console.Write("Enter IP to Connect to Server : ");
-			String serverIPString = "10.8.101.4";// Console.ReadLine();
+			String serverIPString = Console.ReadLine();
 			
 			Console.Write("\nEnter Port to Connect to Server : ");
-			String serverPortString = "6969";//Console.ReadLine();
+			String serverPortString = Console.ReadLine();
 			
 			try
 			{

@@ -1,4 +1,13 @@
-﻿using System;
+﻿﻿/*
+ *  SharpChat Console for Server
+ *  https://github.com/mafiya69/SharpChat.git
+ * 
+ * Copyright (c) 2015 Govind Sahai (mafiya69)
+ * Licensed under the MIT license.
+ * 
+ */
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -17,10 +26,10 @@ namespace SharpChatConsoleServer
         static void Main(string[] args)
         {
             Console.Write("Enter IP to Create Server : ");
-            String serverIPString = "10.8.101.4";// Console.ReadLine();
+            String serverIPString = Console.ReadLine();
 
             Console.Write("\nEnter Port to Create Server : ");
-            String serverPortString = "6969";// Console.ReadLine();
+            String serverPortString = Console.ReadLine();
 
             try
             {
