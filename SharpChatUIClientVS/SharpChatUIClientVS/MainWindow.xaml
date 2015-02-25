@@ -1,0 +1,9 @@
+﻿<Window x:Name="currentWin"
+        x:Class="SharpChatUIClientVS.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ClientWindows" Height="350" Width="525">
+    <Grid>
+        
+    </Grid>
+</Window>

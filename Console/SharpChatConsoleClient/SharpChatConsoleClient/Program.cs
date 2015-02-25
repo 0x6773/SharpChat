@@ -101,7 +101,6 @@ namespace SharpChatConsoleClient
                 {
                     Console.WriteLine("Connection has been closed forcibly\n" +
                     "\nPress Any Key to exit...\n");
-                    Console.ReadKey();
                     Environment.Exit(0);
                 }
                 Byte[] outStream = null;
@@ -161,6 +160,7 @@ namespace SharpChatConsoleClient
                 {
                     status = STATUS.DISCONNECTED;
                 }
+                inString = inString.Trim();
                 Console.WriteLine(inString);
             }
         }

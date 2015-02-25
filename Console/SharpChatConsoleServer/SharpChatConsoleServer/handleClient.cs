@@ -82,6 +82,7 @@ namespace SharpChatConsoleServer
                 }
                 else if (status == STATUS.KICKED)
                 {
+                    Console.SetCursorPosition(0, Console.CursorTop + 1);
                     break;
                 }
                 byte[] inStream = new byte[10025];
