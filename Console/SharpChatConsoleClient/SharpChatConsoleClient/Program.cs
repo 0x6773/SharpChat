@@ -33,10 +33,10 @@ namespace SharpChatConsoleClient
             
 
             Console.Write("Enter IP to Connect to Server : ");
-            String serverIPString = Console.ReadLine();
+            String serverIPString = "10.8.101.4"; //Console.ReadLine();
 
             Console.Write("\nEnter Port to Connect to Server : ");
-            String serverPortString = Console.ReadLine();
+            String serverPortString = "6969"; //Console.ReadLine();
 
             try
             {

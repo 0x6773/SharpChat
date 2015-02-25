@@ -16,20 +16,69 @@ using System.Text;
 using System.Threading;
 
 namespace SharpChatConsoleServer
-{
+{    
+    public static class staticClass
+    {
+        private static bool toBeSent { get; set; }
+        private static void kickClient(string p)
+        {
+            if (Server.kickIfPossible(p))
+                toBeSent = false;
+            else
+                toBeSent = true;
+        }
+        public static void checkCommand(String command)
+        {
+            var tempList = command.Split(' ');
+            try
+            {
+                if (tempList[0].ToUpper() == "KICK")
+                    kickClient(tempList[1].ToUpper());
+            }
+            catch(Exception)
+            {
+                toBeSent = true;
+            }
+        }
+
+        public static String getCommand()
+        {
+            toBeSent = true;
+            String cmd = Console.ReadLine();
+            if (cmd[0] == '/')
+            {
+                toBeSent = false;
+                staticClass.checkCommand(cmd.Substring(1));
+            }
+            if (toBeSent)
+                return cmd;
+            else
+            {
+                cmd = "";
+                return cmd;
+            }
+        }
+    }
+
+    //  Class Server
     class Server
     {
-        static HashSet<handleClient> clientsList = new HashSet<handleClient>();
+        //  HashSet<> Storing Data of All Clients
+        static List<handleClient> clientsList = new List<handleClient>();
 
+        //  TcpLister for Server
         static TcpListener serverSocket { get; set; }
 
+        //  Main Method
         static void Main(string[] args)
         {
+            //  Get IP
             Console.Write("Enter IP to Create Server : ");
-            String serverIPString = Console.ReadLine();
+            String serverIPString = "10.8.101.4";//Console.ReadLine();
 
+            //  Get Port
             Console.Write("\nEnter Port to Create Server : ");
-            String serverPortString = Console.ReadLine();
+            String serverPortString = "6969"; //Console.ReadLine();
 
             try
             {
@@ -45,6 +94,7 @@ namespace SharpChatConsoleServer
             }
             try
             {
+                //  Starting TcpLister
                 serverSocket.Start();
             }
             catch(SocketException)
@@ -59,6 +109,7 @@ namespace SharpChatConsoleServer
             Console.WriteLine("\nServer Started at IP : {0}, Port : {1}", serverIPString, serverPortString);
             try
             {
+                //  Creating threads for get Connection From Client And Server Chatting
                 new Thread(getClientConnection).Start();
                 new Thread(ServerChat).Start();
             }
@@ -76,6 +127,7 @@ namespace SharpChatConsoleServer
             }
         }
 
+        //  Starting Chat Room For Client
         static void getClientConnection()
         {
             while (true)
@@ -94,6 +146,7 @@ namespace SharpChatConsoleServer
             }
         }
 
+        //  Deleting Client Data from ClientList
         public static void deleteClientConnection(handleClient toDeleteClient)
         {
             try
@@ -106,13 +159,33 @@ namespace SharpChatConsoleServer
             }
         }
 
+        //  Kick the Client and return if kicked
+        public static bool kickIfPossible(String clientName)
+        {
+            try 
+            {
+                var tempHL = clientsList.Find(s => s.MachineName == clientName);
+                deleteClientConnection(tempHL);
+                tempHL.status = handleClient.STATUS.KICKED;
+                tempHL.clientSocket.Close();
+                Console.WriteLine("--- " + tempHL.MachineName + " KICKED ---");
+                Server.broadcastInputString("--- " + tempHL.MachineName + " KICKED ---$", tempHL);
+            }
+            catch(Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        //  Server Chat : Method for Server Chatting
         static void ServerChat()
         {
             while (true)
             {
                 try
                 {
-                    String outString = Console.ReadLine();
+                    String outString = staticClass.getCommand();
                     if (outString.Length == 0)
                     {
                         Console.SetCursorPosition(0, Console.CursorTop - 1);
@@ -140,6 +213,7 @@ namespace SharpChatConsoleServer
             }
         }
 
+        //  Broadcasting Input from one Client to All other Clients
         public static void broadcastInputStream(byte[] broadcastStream,handleClient fromClient)
         {
             try
@@ -159,6 +233,7 @@ namespace SharpChatConsoleServer
             }
         }
 
+        //  Broadcasting Input from one Client to All other Clients
         public static void broadcastInputString(String broadcastString, handleClient fromClient)
         {
             try
@@ -176,110 +251,6 @@ namespace SharpChatConsoleServer
             catch (Exception)
             {
                 Console.WriteLine("\nError Occured While BroadCasting the Message of " + fromClient.MachineName);
-            }
-        }
-    }
-
-    class handleClient
-    {
-        public TcpClient clientSocket { get; set; }
-        public String MachineName { get; set; }
-
-        private enum STATUS
-        {
-            CONNECTED,
-            DISCONNECTED
-        }
-        private STATUS status { get; set; }
-        public handleClient(TcpClient clientSocketTemp)
-        {
-            try
-            {
-                this.clientSocket = clientSocketTemp;
-
-                NetworkStream networkStream = clientSocket.GetStream();
-
-                byte[] clientNameByte = new byte[1000];
-                networkStream.Read(clientNameByte, 0, clientNameByte.Length);
-                this.MachineName = Encoding.ASCII.GetString(clientNameByte);
-                this.MachineName = this.MachineName.Substring(0, this.MachineName.IndexOf('$'));
-                this.status = STATUS.CONNECTED;
-            }
-            catch(Exception)
-            {
-                Console.WriteLine("--- " + this.MachineName + " Tried to Connect ---");
-                Server.broadcastInputString("--- " + this.MachineName + " Tried to Connect ---$", this);
-                        
-                this.status = STATUS.DISCONNECTED;
-            }
-            try
-            {
-                if (status == STATUS.CONNECTED)
-                {
-                    Console.WriteLine("--- " + this.MachineName + " Connected ---");
-                    Server.broadcastInputString("--- " + this.MachineName + " Connected ---$", this);
-                }
-            }
-            catch(Exception)
-            {
-                Console.WriteLine("\nUnknown Error Occured But You Can continue.");
-            }
-            try
-            {
-                new Thread(FromClientChat).Start();
-            }
-            catch(Exception)
-            {
-                Console.WriteLine("--- " + this.MachineName + " DISConnected ---");
-                Server.broadcastInputString("--- " + this.MachineName + " DISConnected ---$", this);
-                this.status = STATUS.DISCONNECTED;
-            }
-            if (status == STATUS.DISCONNECTED)
-                Server.deleteClientConnection(this);
-        }
-
-        private void FromClientChat()
-        {
-            while (true)
-            {
-                if (status == STATUS.DISCONNECTED) 
-                {
-                    Server.deleteClientConnection(this);
-                    break;
-                }
-                byte[] inStream = new byte[10025];
-                string inString = null;
-                try
-                {
-                    NetworkStream networkStream = this.clientSocket.GetStream();
-                    networkStream.Read(inStream, 0, inStream.Length);
-
-                    inString = Encoding.ASCII.GetString(inStream);
-                    inString = inString.Substring(0, inString.IndexOf('$'));
-                    Console.WriteLine(inString);
-                    Server.broadcastInputStream(inStream, this);
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("--- " + this.MachineName + " DISConnected ---");
-                    Server.broadcastInputString("--- " + this.MachineName + " DISConnected ---$", this);
-                    this.status = STATUS.DISCONNECTED;
-                }
-            }
-        }
-
-        public void FromServerChat(byte[] outStream)
-        {
-            if (status == STATUS.DISCONNECTED)
-                Server.deleteClientConnection(this);
-            try
-            {
-                NetworkStream networkStream = this.clientSocket.GetStream();
-                networkStream.Write(outStream, 0, outStream.Length);
-            }
-            catch(Exception)
-            {
-                //  Unknown Error
             }
         }
     }
