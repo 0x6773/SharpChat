@@ -14,7 +14,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <TextBlock Text="Server IP: " Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="25"/>
-            <TextBox x:Name="serverIP" Text="10.8.101.4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Center" FontSize="25" Width="170" IsEnabled="True" Margin="0,0,20,0"/>
+            <TextBox x:Name="serverIP" Text="10.3.31.253" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Center" FontSize="25" Width="170" IsEnabled="True" Margin="0,0,20,0"/>
             <TextBlock Text="Server Port: " Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="25"/>
             <TextBox x:Name="serverPort" Text="6969" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Center" FontSize="25" Width="150" IsEnabled="True" Margin="0,0,20,0"/>
         </Grid>

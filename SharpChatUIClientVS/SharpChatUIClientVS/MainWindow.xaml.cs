@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -35,6 +36,7 @@ namespace SharpChatUIClientVS
             try
             {
                 clientSocket.Connect(serverIP.Text, Int32.Parse(serverPort.Text));
+                status = STATUS.CONNECTED;
             }
             catch(FormatException)
             {
@@ -64,6 +66,8 @@ namespace SharpChatUIClientVS
                 byte[] MNStream = Encoding.ASCII.GetBytes(MachineName + "$");
                 networkStream.Write(MNStream, 0, MNStream.Length);
 
+                mainThread = Thread.CurrentThread;
+
                 sc = new Thread(ServerChat);
                 sc.Name = "ServerChatThread";
                 sc.IsBackground = false;
@@ -73,7 +77,6 @@ namespace SharpChatUIClientVS
                 extThread.Name = "ThreadCheckerThread";
                 extThread.Start();
 
-                mainThread = Thread.CurrentThread;
             }
             catch(Exception)
             {
@@ -94,7 +97,7 @@ namespace SharpChatUIClientVS
                     status = STATUS.DISCONNECTED;
                 if (status == STATUS.DISCONNECTED)
                 {
-                    
+                    sc.Abort();
                     break;
                 }
                 
@@ -116,10 +119,21 @@ namespace SharpChatUIClientVS
 
                 try
                 {
+                    networkStream.ReadTimeout = 100;
                     networkStream.Read(inStream, 0, inStream.Length);
 
                     inString = Encoding.ASCII.GetString(inStream);
                     inString = inString.Substring(0, inString.IndexOf('$'));
+                }
+                catch (ArgumentException) 
+                {
+                    //  Do Nothing
+                    continue;
+                }
+                catch (IOException)
+                {
+                    //  Do Nothing
+                    continue;
                 }
                 catch (Exception)
                 {
