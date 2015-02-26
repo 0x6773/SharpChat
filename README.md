@@ -1,11 +1,17 @@
 # SharpChat
 A Simple Chat Console Program. Currently Supporting Two at a time.
 ```
-Work In Progress
+There are some bugs which are not going to be Solved for the time being.
+But Issues are welcome
 ```
-##Aim
-Add GUI, Cross-Platform Accross Unix And Windows Using Windows And Linux
+##How to Use
+You must have Visual Studio 2013/2015 to open the project. 
 
 ##Framework
-Server will be in Console Only Supporting .NET Framework v4.6.
-Client (both GUI and Console) will be developed for .NET Framework v3.5,v4.0 and v4.5.
+```
+SharpChatConsoleClient is in .NET v4.5.
+SharpChatConsoleServer is in .NET v4.6.
+MonoClient is in .NET v3.5.
+SharpChatUIClientVS is in .NET v4.6.
+```
+
