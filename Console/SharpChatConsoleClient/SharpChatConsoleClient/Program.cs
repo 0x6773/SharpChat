@@ -20,13 +20,13 @@ namespace SharpChatConsoleClient
     {
         static NetworkStream networkStream = null;
 
+        static STATUS status { get; set; }
         enum STATUS
         {
             CONNECTED,
             DISCONNECTED
         }
-
-        static STATUS status { get; set; }
+        
         static void Main(string[] args)
         {
             TcpClient clientSocket = new TcpClient();
@@ -159,6 +159,7 @@ namespace SharpChatConsoleClient
                 catch (Exception)
                 {
                     status = STATUS.DISCONNECTED;
+                    continue;
                 }
                 inString = inString.Trim();
                 Console.WriteLine(inString);

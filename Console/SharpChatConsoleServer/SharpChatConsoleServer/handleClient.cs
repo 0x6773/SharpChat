@@ -14,13 +14,14 @@ namespace SharpChatConsoleServer
         public TcpClient clientSocket { get; set; }
         public String MachineName { get; set; }
 
+        public STATUS status { get; set; }
+
         public enum STATUS
         {
             CONNECTED,
             DISCONNECTED,
             KICKED
-        }
-        public STATUS status { get; set; }
+        }      
 
         //  Constructor
         public handleClient(TcpClient clientSocketTemp)

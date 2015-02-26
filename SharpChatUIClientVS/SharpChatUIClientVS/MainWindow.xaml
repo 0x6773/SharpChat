@@ -2,8 +2,45 @@
         x:Class="SharpChatUIClientVS.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="ClientWindows" Height="350" Width="525">
+        Title="ClientWindow" Height="600" Width="700" ResizeMode="CanMinimize">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="6*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Margin="20,10,10,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Server IP: " Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="25"/>
+            <TextBox x:Name="serverIP" Text="10.8.101.4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Center" FontSize="25" Width="170" IsEnabled="True" Margin="0,0,20,0"/>
+            <TextBlock Text="Server Port: " Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="25"/>
+            <TextBox x:Name="serverPort" Text="6969" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Center" FontSize="25" Width="150" IsEnabled="True" Margin="0,0,20,0"/>
+        </Grid>
         
+        <Grid Grid.Row="1" Margin="10,10,10,30">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2.5*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0" Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBox x:Name="chatWindow" Grid.Row="0" Text="MAFIYANEMAFKIYA" IsReadOnly="True" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Visible" VerticalContentAlignment="Bottom"/>
+                <TextBox x:Name="chatInputWindow" TextChanged="chatInputWindow_TextChanged" IsReadOnly="True" Grid.Row="1" Text="Input Here" TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,10"/>
+            </Grid>
+            <Grid Grid.Column="1" Margin="10">
+                <Button x:Name="connectToServer" Content="Connect" FontSize="25" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="50" Margin="5" Click="connectToServer_Click"/>
+                <Button x:Name="sendChat" IsEnabled="False" Content="Send" FontSize="25" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="50" Margin="5,5,5,15" Click="sendChat_Click" IsDefault="False"/>
+            </Grid>            
+        </Grid>
+        
+        <StatusBar HorizontalAlignment="Center" Grid.Row="1" Height="25" VerticalAlignment="Bottom" Width="700">
+            <TextBlock Text=" "/>
+            <TextBlock x:Name="statusText" Text="STATUS : DISCONNECTED"/>
+        </StatusBar>
     </Grid>
 </Window>

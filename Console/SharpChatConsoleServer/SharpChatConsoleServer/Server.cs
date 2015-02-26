@@ -43,19 +43,23 @@ namespace SharpChatConsoleServer
 
         public static String getCommand()
         {
-            toBeSent = true;
-            String cmd = Console.ReadLine();
-            if (cmd[0] == '/')
+            try
             {
-                toBeSent = false;
-                staticClass.checkCommand(cmd.Substring(1));
+                toBeSent = true;
+                String cmd = Console.ReadLine();
+                if (cmd[0] == '/')
+                {
+                    toBeSent = false;
+                    staticClass.checkCommand(cmd.Substring(1));
+                }
+                if (toBeSent)
+                    return cmd;
+                else
+                    return null;
             }
-            if (toBeSent)
-                return cmd;
-            else
+            catch(Exception)
             {
-                cmd = "";
-                return cmd;
+                return null;
             }
         }
     }
@@ -186,11 +190,12 @@ namespace SharpChatConsoleServer
                 try
                 {
                     String outString = staticClass.getCommand();
-                    if (outString.Length == 0)
+                    if (outString == null)
                     {
                         Console.SetCursorPosition(0, Console.CursorTop - 1);
                         continue;
                     }
+                    var size = outString.Length;
                     Console.SetCursorPosition(0, Console.CursorTop - 1);
                     Console.WriteLine(" > Me : " + outString);
 
@@ -205,11 +210,11 @@ namespace SharpChatConsoleServer
                 {
                     Console.WriteLine("\nError Reading/Writing to Console.");
                 }
-                catch(Exception)
+                /*catch(Exception)
                 {
                     Console.WriteLine("\nUnknown Error Occurred\n" +
                         "If you ofter seeing this Message, Please Restart Server");
-                }
+                }*/
             }
         }
 
