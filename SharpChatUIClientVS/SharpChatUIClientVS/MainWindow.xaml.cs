@@ -13,8 +13,6 @@ namespace SharpChatUIClientVS
 
         NetworkStream networkStream = null;
 
-        String chatWindowString { get; set; }
-
         Thread sc = null;
         Thread extThread = null;
         Thread mainThread = null;
@@ -86,7 +84,6 @@ namespace SharpChatUIClientVS
                 changeAllChatItemsTo(false);
             }
             chatWindow.Text = "";
-            chatWindowString = "";
         }
 
         private void threadChecker()
@@ -94,14 +91,11 @@ namespace SharpChatUIClientVS
             while (true)
             {
                 if (!mainThread.IsAlive)
-                    status = STATUS.DISCONNECTED;
-                if (status == STATUS.DISCONNECTED)
                 {
                     sc.Abort();
                     break;
                 }
-                
-                Thread.Sleep(4000);
+                Thread.Sleep(1900);
             }
         }
 
@@ -141,7 +135,11 @@ namespace SharpChatUIClientVS
                     continue;
                 }
                 inString = inString.Trim();
-                chatWindowString += "\n" + inString;
+                
+                this.Dispatcher.Invoke((Action)(() =>
+                {
+                    chatWindow.Text += "\n" + inString;
+                }));
             }
         }
 
@@ -179,7 +177,6 @@ namespace SharpChatUIClientVS
                 if (outString.Length == 0)
                     return;
                 chatWindow.Text += "\n > Me : " + outString;
-                chatWindowString = chatWindow.Text;
                 outString = " > " + Environment.MachineName + " : " + outString;
                 outStream = Encoding.ASCII.GetBytes(outString + "$");
             }
@@ -197,11 +194,6 @@ namespace SharpChatUIClientVS
                 status = STATUS.DISCONNECTED;
             }
             chatInputWindow.Text = "";
-        }
-
-        private void chatInputWindow_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-            chatWindow.Text = chatWindowString;
         }
     }
 }

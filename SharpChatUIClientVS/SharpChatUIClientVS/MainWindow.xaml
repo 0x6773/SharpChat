@@ -14,9 +14,9 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <TextBlock Text="Server IP: " Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="25"/>
-            <TextBox x:Name="serverIP" Text="10.3.31.253" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Center" FontSize="25" Width="170" IsEnabled="True" Margin="0,0,20,0"/>
+            <TextBox x:Name="serverIP" Text="0.0.0.0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Center" FontSize="25" Width="170" IsEnabled="True" Margin="0,0,20,0"/>
             <TextBlock Text="Server Port: " Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="25"/>
-            <TextBox x:Name="serverPort" Text="6969" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Center" FontSize="25" Width="150" IsEnabled="True" Margin="0,0,20,0"/>
+            <TextBox x:Name="serverPort" Text="8888" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Center" FontSize="25" Width="150" IsEnabled="True" Margin="0,0,20,0"/>
         </Grid>
         
         <Grid Grid.Row="1" Margin="10,10,10,30">
@@ -30,7 +30,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <TextBox x:Name="chatWindow" Grid.Row="0" Text="MAFIYANEMAFKIYA" IsReadOnly="True" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Visible" VerticalContentAlignment="Bottom"/>
-                <TextBox x:Name="chatInputWindow" TextChanged="chatInputWindow_TextChanged" IsReadOnly="True" Grid.Row="1" Text="Input Here" TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,10"/>
+                <TextBox x:Name="chatInputWindow" IsReadOnly="True" Grid.Row="1" Text="Input Here" TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,10"/>
             </Grid>
             <Grid Grid.Column="1" Margin="10">
                 <Button x:Name="connectToServer" Content="Connect" FontSize="25" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="50" Margin="5" Click="connectToServer_Click"/>

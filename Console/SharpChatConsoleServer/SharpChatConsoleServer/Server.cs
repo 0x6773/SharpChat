@@ -78,11 +78,11 @@ namespace SharpChatConsoleServer
         {
             //  Get IP
             Console.Write("Enter IP to Create Server : ");
-            String serverIPString = "10.3.31.253";//Console.ReadLine();
+            String serverIPString = Console.ReadLine();
 
             //  Get Port
             Console.Write("\nEnter Port to Create Server : ");
-            String serverPortString = "6969"; //Console.ReadLine();
+            String serverPortString = Console.ReadLine();
 
             try
             {
