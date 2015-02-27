@@ -1,5 +1,5 @@
 # SharpChat
-A Simple Chat Console Program. Currently Supporting Two at a time.
+A Simple Chat Program.Server Program is in Console Only. Client Program is both in Console And GUI based. There are some bugs in GUI Client Program.
 ```
 There are some bugs which are not going to be Solved for the time being.
 But Issues are welcome
