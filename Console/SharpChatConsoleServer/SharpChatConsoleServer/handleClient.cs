@@ -9,13 +9,18 @@ using System.Threading.Tasks;
 namespace SharpChatConsoleServer
 {
     //  Class to handle Clients
-    class handleClient
+    class Client
     {
+        //  TcpClient of User
         public TcpClient clientSocket { get; set; }
+
+        //  MachineName of User
         public String MachineName { get; set; }
 
+        //  status of Client
         public STATUS status { get; set; }
 
+        //  enum of status
         public enum STATUS
         {
             CONNECTED,
@@ -24,16 +29,18 @@ namespace SharpChatConsoleServer
         }      
 
         //  Constructor
-        public handleClient(TcpClient clientSocketTemp)
+        public Client(TcpClient clientSocketTemp)
         {
             try
             {
                 this.clientSocket = clientSocketTemp;
+                var clientNameByte = new byte[1000];
 
-                NetworkStream networkStream = clientSocket.GetStream();
-
-                byte[] clientNameByte = new byte[1000];
-                networkStream.Read(clientNameByte, 0, clientNameByte.Length);
+                using(var networkStream = clientSocket.GetStream())
+                {
+                    networkStream.Read(clientNameByte, 0, clientNameByte.Length);
+                }               
+                
                 this.MachineName = Encoding.ASCII.GetString(clientNameByte);
                 this.MachineName = this.MachineName.Substring(0, this.MachineName.IndexOf('$'));
                 this.status = STATUS.CONNECTED;
@@ -86,13 +93,14 @@ namespace SharpChatConsoleServer
                     Console.SetCursorPosition(0, Console.CursorTop + 1);
                     break;
                 }
-                byte[] inStream = new byte[10025];
+                var inStream = new byte[10025];
                 string inString = null;
                 try
                 {
-                    NetworkStream networkStream = this.clientSocket.GetStream();
-                    networkStream.Read(inStream, 0, inStream.Length);
-
+                    using (var networkStream = this.clientSocket.GetStream())
+                    {
+                        networkStream.Read(inStream, 0, inStream.Length);
+                    }
                     inString = Encoding.ASCII.GetString(inStream);
                     inString = inString.Substring(0, inString.IndexOf('$'));
                     Console.WriteLine(inString);
@@ -117,8 +125,10 @@ namespace SharpChatConsoleServer
                 Server.deleteClientConnection(this);
             try
             {
-                NetworkStream networkStream = this.clientSocket.GetStream();
-                networkStream.Write(outStream, 0, outStream.Length);
+                using (var networkStream = this.clientSocket.GetStream())
+                {
+                    networkStream.Write(outStream, 0, outStream.Length);
+                }
             }
             catch (Exception)
             {

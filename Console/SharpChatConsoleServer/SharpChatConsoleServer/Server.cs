@@ -17,16 +17,68 @@ using System.Threading;
 
 namespace SharpChatConsoleServer
 {    
+    //  StaticClass for handling Commands
     public static class staticClass
     {
+        //  String input in getCommand() toBeSent or not
         private static bool toBeSent { get; set; }
+
+        //  Method for /kick Command
         private static void kickClient(string p)
         {
-            if (Server.kickIfPossible(p))
-                toBeSent = false;
-            else
-                toBeSent = true;
+            try
+            {
+                if (Server.kickIfPossible(p))
+                    toBeSent = false;
+                else
+                    toBeSent = true;
+            }
+            catch(Exception)
+            {
+                //  Unknown Exception
+            }
         }
+
+        //  ShutdownServer
+        private static void shutdown()
+        {
+            try
+            {
+                Server.broadcastInputString("The Server is going to shut down in$");
+                for (int i = 10; i > 0; --i)
+                {
+                    Server.broadcastInputString(i.ToString() + " sec...$");
+                    Console.WriteLine(i.ToString() + " sec...");
+                    Thread.Sleep(990);
+                }
+                Server.broadcastInputString("Server ShutDown...$");
+                Console.WriteLine("Server ShutDown...");
+                Environment.Exit(0);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("A Problem Occurred and Requested Operation Cannot be completed");
+            }
+        }
+
+        //  Method to show Help
+        private static void viewHelp()
+        {
+            try
+            {
+                Console.WriteLine("Help for SharpChat Server\n\n" +
+                    "Type \"/kick <CLIENTNAME>\" to kick the client\n" +
+                    "Type \"/help\" to get this help \n\n" +
+                    "Type \"/shutdown\" to shutdown chatServer \n\n" +
+                    "More Commands coming soon.\n\n");
+            }
+            catch(Exception)
+            {
+                //  Unknown Exception
+            }
+        }
+
+        //  Check if any command is present or a simple string
         public static void checkCommand(String command)
         {
             var tempList = command.Split(' ');
@@ -34,6 +86,12 @@ namespace SharpChatConsoleServer
             {
                 if (tempList[0].ToUpper() == "KICK")
                     kickClient(tempList[1].ToUpper());
+                else if (tempList[0].ToUpper() == "HELP")
+                    viewHelp();
+                else if (tempList[0].ToUpper() == "SHUTDOWN")
+                    shutdown();
+                else
+                    toBeSent = true;
             }
             catch(Exception)
             {
@@ -41,6 +99,7 @@ namespace SharpChatConsoleServer
             }
         }
 
+        //  Method to get input from User
         public static String getCommand()
         {
             try
@@ -68,7 +127,7 @@ namespace SharpChatConsoleServer
     class Server
     {
         //  HashSet<> Storing Data of All Clients
-        static List<handleClient> clientsList = new List<handleClient>();
+        static List<Client> clientsList = new List<Client>();
 
         //  TcpLister for Server
         static TcpListener serverSocket { get; set; }
@@ -79,10 +138,12 @@ namespace SharpChatConsoleServer
             //  Get IP
             Console.Write("Enter IP to Create Server : ");
             String serverIPString = Console.ReadLine();
+            serverIPString = serverIPString.Trim();
 
             //  Get Port
             Console.Write("\nEnter Port to Create Server : ");
             String serverPortString = Console.ReadLine();
+            serverPortString = serverPortString.Trim();
 
             try
             {
@@ -91,7 +152,7 @@ namespace SharpChatConsoleServer
             }
             catch(Exception)
             {
-                Console.WriteLine("\nEither IP or Port or both are not in correct Format."+
+                Console.WriteLine("\nEither IP or Port or both are not in correct Format." +
                     "Press Any Key to exit...\n");
                 Console.ReadKey();
                 Environment.Exit(0);
@@ -103,11 +164,15 @@ namespace SharpChatConsoleServer
             }
             catch(SocketException)
             {
-                Console.WriteLine("\nError Occurred in Creating Server!\n"+
-                    "Try Changing IP Address or Port or both.\n"+
+                Console.WriteLine("\nError Occurred in Creating Server!\n" +
+                    "Try Changing IP Address or Port or both.\n" +
                     "Press Any Key to exit...\n");
                 Console.ReadKey();
                 Environment.Exit(0);
+            }
+            catch(Exception)
+            {
+                //  Unknown Exception
             }
 
             Console.WriteLine("\nServer Started at IP : {0}, Port : {1}", serverIPString, serverPortString);
@@ -123,11 +188,15 @@ namespace SharpChatConsoleServer
             }
             catch(OutOfMemoryException)
             {
-                Console.WriteLine("\nOutOfMemoryException Thrown.\n"+
-                    "There is not enough memory available to start this Process.\n"+
+                Console.WriteLine("\nOutOfMemoryException Thrown.\n" +
+                    "There is not enough memory available to start this Process.\n" +
                     "Press Any Key To exit...");
                 Console.ReadKey();
                 Environment.Exit(0);
+            }
+            catch(Exception)
+            {
+                //  Unknown Exception
             }
         }
 
@@ -139,19 +208,19 @@ namespace SharpChatConsoleServer
                 try
                 {
                     TcpClient clientSocket = serverSocket.AcceptTcpClient();
-                    handleClient newClient = new handleClient(clientSocket);
+                    Client newClient = new Client(clientSocket);
                     clientsList.Add(newClient);
                 }
                 catch(Exception)
                 {
-                    Console.WriteLine("\nUnknown Error Occurred\n"+
-                        "If you ofter seeing this Message, Please Restart Server");
+                    Console.WriteLine("\nUnknown Error Occurred\n" +
+                        "If you often seeing this Message, Please Restart Server");
                 }
             }
         }
 
         //  Deleting Client Data from ClientList
-        public static void deleteClientConnection(handleClient toDeleteClient)
+        public static void deleteClientConnection(Client toDeleteClient)
         {
             try
             {
@@ -159,7 +228,7 @@ namespace SharpChatConsoleServer
             }
             catch(Exception)
             {
-                
+                //  Unknown Exception
             }
         }
 
@@ -170,7 +239,7 @@ namespace SharpChatConsoleServer
             {
                 var tempHL = clientsList.Find(s => s.MachineName == clientName);
                 deleteClientConnection(tempHL);
-                tempHL.status = handleClient.STATUS.KICKED;
+                tempHL.status = Client.STATUS.KICKED;
                 tempHL.clientSocket.Close();
                 Console.WriteLine("--- " + tempHL.MachineName + " KICKED ---");
                 Server.broadcastInputString("--- " + tempHL.MachineName + " KICKED ---$", tempHL);
@@ -210,26 +279,27 @@ namespace SharpChatConsoleServer
                 {
                     Console.WriteLine("\nError Reading/Writing to Console.");
                 }
-                /*catch(Exception)
+                catch(Exception)
                 {
                     Console.WriteLine("\nUnknown Error Occurred\n" +
                         "If you ofter seeing this Message, Please Restart Server");
-                }*/
+                }
             }
         }
 
         //  Broadcasting Input from one Client to All other Clients
-        public static void broadcastInputStream(byte[] broadcastStream,handleClient fromClient)
+        public static void broadcastInputStream(byte[] broadcastStream,Client fromClient = null)
         {
             try
             {
-                NetworkStream networkStream = null;
                 foreach (var otherClients in clientsList)
                 {
                     if (otherClients == fromClient)
                         continue;
-                    networkStream = otherClients.clientSocket.GetStream();
-                    networkStream.Write(broadcastStream, 0, broadcastStream.Length);
+                    using (var networkStream = otherClients.clientSocket.GetStream())
+                    {
+                        networkStream.Write(broadcastStream, 0, broadcastStream.Length);
+                    }
                 }
             }
             catch(Exception)
@@ -239,7 +309,7 @@ namespace SharpChatConsoleServer
         }
 
         //  Broadcasting Input from one Client to All other Clients
-        public static void broadcastInputString(String broadcastString, handleClient fromClient)
+        public static void broadcastInputString(String broadcastString, Client fromClient = null)
         {
             try
             {

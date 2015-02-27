@@ -46,6 +46,11 @@ namespace SharpChatUIClientVS
                 MessageBox.Show("No connection to the host has been made!\nCheck You LAN.", "Attention");
                 return;
             }
+            catch(Exception)
+            {
+                MessageBox.Show("Seems like IP or Port are not in Correct Format!", "Attention");
+                return;
+            }
             changeAllConnectionItemsTo(false);
             changeAllChatItemsTo(true);
             try
@@ -135,11 +140,17 @@ namespace SharpChatUIClientVS
                     continue;
                 }
                 inString = inString.Trim();
-                
-                this.Dispatcher.Invoke((Action)(() =>
+                try
                 {
-                    chatWindow.Text += "\n" + inString;
-                }));
+                    this.Dispatcher.Invoke((Action)(() =>
+                    {
+                        chatWindow.Text += "\n" + inString;
+                    }));
+                }
+                catch(Exception)
+                {
+                    //  Main thread exited
+                }
             }
         }
 
