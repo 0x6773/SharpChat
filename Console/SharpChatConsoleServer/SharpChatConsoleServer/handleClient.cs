@@ -36,13 +36,12 @@ namespace SharpChatConsoleServer
                 this.clientSocket = clientSocketTemp;
                 var clientNameByte = new byte[1000];
 
-                using(var networkStream = clientSocket.GetStream())
-                {
-                    networkStream.Read(clientNameByte, 0, clientNameByte.Length);
-                }               
+                var networkStream = clientSocket.GetStream();
+                networkStream.Read(clientNameByte, 0, clientNameByte.Length);
                 
                 this.MachineName = Encoding.ASCII.GetString(clientNameByte);
                 this.MachineName = this.MachineName.Substring(0, this.MachineName.IndexOf('$'));
+                this.MachineName = this.MachineName.Trim();
                 this.status = STATUS.CONNECTED;
             }
             catch (Exception)
@@ -97,10 +96,8 @@ namespace SharpChatConsoleServer
                 string inString = null;
                 try
                 {
-                    using (var networkStream = this.clientSocket.GetStream())
-                    {
-                        networkStream.Read(inStream, 0, inStream.Length);
-                    }
+                    var networkStream = this.clientSocket.GetStream();
+                    networkStream.Read(inStream, 0, inStream.Length);
                     inString = Encoding.ASCII.GetString(inStream);
                     inString = inString.Substring(0, inString.IndexOf('$'));
                     Console.WriteLine(inString);
@@ -125,10 +122,8 @@ namespace SharpChatConsoleServer
                 Server.deleteClientConnection(this);
             try
             {
-                using (var networkStream = this.clientSocket.GetStream())
-                {
-                    networkStream.Write(outStream, 0, outStream.Length);
-                }
+                var networkStream = this.clientSocket.GetStream();
+                networkStream.Write(outStream, 0, outStream.Length);
             }
             catch (Exception)
             {

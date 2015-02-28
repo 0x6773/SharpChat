@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -18,28 +19,33 @@ namespace SharpChatConsoleClient
 {
     class Client
     {
-        static NetworkStream networkStream = null;
+        //  TcpClient of client
+        static TcpClient clientSocket { get; set; }
 
+        //  Status of client/Server Connection
         static STATUS status { get; set; }
+
+        //  enum for STATUS
         enum STATUS
         {
             CONNECTED,
             DISCONNECTED
         }
         
+        //  Entry Point
         static void Main(string[] args)
-        {
-            TcpClient clientSocket = new TcpClient();
-            
-
+        {            
             Console.Write("Enter IP to Connect to Server : ");
-            String serverIPString = "10.8.101.4"; //Console.ReadLine();
+            String serverIPString = Console.ReadLine();
+            serverIPString = serverIPString.Trim();
 
             Console.Write("\nEnter Port to Connect to Server : ");
-            String serverPortString = "6969"; //Console.ReadLine();
+            String serverPortString = Console.ReadLine();
+            serverPortString = serverPortString.Trim();
 
             try
             {
+                clientSocket = new TcpClient();
                 clientSocket.Connect(serverIPString, Int32.Parse(serverPortString));
                 status = STATUS.CONNECTED;
             }
@@ -63,7 +69,6 @@ namespace SharpChatConsoleClient
             try
             {
                 Console.WriteLine("\nConnected to Server!");
-                networkStream = clientSocket.GetStream();
             }
             catch(Exception)
             {
@@ -78,6 +83,7 @@ namespace SharpChatConsoleClient
             try
             {
                 byte[] MNStream = Encoding.ASCII.GetBytes(MachineName + "$");
+                var networkStream = clientSocket.GetStream();
                 networkStream.Write(MNStream, 0, MNStream.Length);
 
                 new Thread(ServerChat).Start();
@@ -93,20 +99,22 @@ namespace SharpChatConsoleClient
             }
         }
 
+        //  ClientChat
         static void ClientChat()
         {
             while (true)
             {
                 if (status == STATUS.DISCONNECTED)
                 {
-                    Console.WriteLine("Connection has been closed forcibly\n" +
-                    "\nPress Any Key to exit...\n");
-                    Environment.Exit(0);
+                    return;
                 }
                 Byte[] outStream = null;
                 try
                 {
                     String outString = Console.ReadLine();
+                    if (status == STATUS.DISCONNECTED)
+                        return;
+                    outString = outString.Trim();
                     if (outString.Length == 0)
                     {
                         Console.SetCursorPosition(0, Console.CursorTop - 1);
@@ -126,6 +134,7 @@ namespace SharpChatConsoleClient
                 }
                 try
                 {
+                    var networkStream = clientSocket.GetStream();
                     networkStream.Write(outStream, 0, outStream.Length);
                 }
                 catch (Exception)
@@ -135,6 +144,7 @@ namespace SharpChatConsoleClient
             }
         }
 
+        //  ServerChat
         static void ServerChat()
         {
             while (true)
@@ -143,18 +153,23 @@ namespace SharpChatConsoleClient
                 {
                     Console.WriteLine("Connection has been closed forcibly\n" +
                     "\nPress Any Key to exit...\n");
-                    Console.ReadKey();
-                    Environment.Exit(0);
+                    return;
                 }
                 byte[] inStream = new byte[10025];
                 string inString = null;
 
                 try
                 {
+                    var networkStream = clientSocket.GetStream();
                     networkStream.Read(inStream, 0, inStream.Length);
 
                     inString = Encoding.ASCII.GetString(inStream);
                     inString = inString.Substring(0, inString.IndexOf('$'));
+                }
+                catch(IOException)
+                {
+                    status = STATUS.DISCONNECTED;
+                    continue;
                 }
                 catch (Exception)
                 {

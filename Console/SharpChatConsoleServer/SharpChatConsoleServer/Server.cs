@@ -68,8 +68,9 @@ namespace SharpChatConsoleServer
             {
                 Console.WriteLine("Help for SharpChat Server\n\n" +
                     "Type \"/kick <CLIENTNAME>\" to kick the client\n" +
-                    "Type \"/help\" to get this help \n\n" +
-                    "Type \"/shutdown\" to shutdown chatServer \n\n" +
+                    "Type \"/help\" to get this help \n" +
+                    "Type \"/shutdown\" to shutdown chatServer \n" +
+                    "Type \"/showall\" to show names of all connected clients \n\n" +
                     "More Commands coming soon.\n\n");
             }
             catch(Exception)
@@ -264,6 +265,7 @@ namespace SharpChatConsoleServer
                         Console.SetCursorPosition(0, Console.CursorTop - 1);
                         continue;
                     }
+                    outString = outString.Trim();
                     var size = outString.Length;
                     Console.SetCursorPosition(0, Console.CursorTop - 1);
                     Console.WriteLine(" > Me : " + outString);
@@ -296,10 +298,8 @@ namespace SharpChatConsoleServer
                 {
                     if (otherClients == fromClient)
                         continue;
-                    using (var networkStream = otherClients.clientSocket.GetStream())
-                    {
-                        networkStream.Write(broadcastStream, 0, broadcastStream.Length);
-                    }
+                    var networkStream = otherClients.clientSocket.GetStream();
+                    networkStream.Write(broadcastStream, 0, broadcastStream.Length);
                 }
             }
             catch(Exception)
