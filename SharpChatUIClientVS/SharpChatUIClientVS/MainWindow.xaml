@@ -14,11 +14,11 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <TextBlock Text="Server IP: " Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="25"/>
-            <TextBox x:Name="serverIP" Text="0.0.0.0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Center" FontSize="25" Width="170" IsEnabled="True" Margin="0,0,20,0"/>
+            <TextBox x:Name="serverIP" Text="10.8.101.4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Center" FontSize="25" Width="170" IsEnabled="True" Margin="0,0,20,0"/>
             <TextBlock Text="Server Port: " Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="25"/>
-            <TextBox x:Name="serverPort" Text="8888" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Center" FontSize="25" Width="150" IsEnabled="True" Margin="0,0,20,0"/>
+            <TextBox x:Name="serverPort" Text="44" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Center" FontSize="25" Width="150" IsEnabled="True" Margin="0,0,20,0"/>
         </Grid>
-        
+
         <Grid Grid.Row="1" Margin="10,10,10,30">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2.5*"/>
@@ -30,14 +30,15 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <TextBox x:Name="chatWindow" Grid.Row="0" Text="MAFIYANEMAFKIYA" IsReadOnly="True" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Visible" VerticalContentAlignment="Bottom"/>
-                <TextBox x:Name="chatInputWindow" IsReadOnly="True" Grid.Row="1" Text="Input Here" TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,10"/>
+                <TextBox x:Name="chatInputWindow" IsReadOnly="True" Grid.Row="1" Text="Input Here" TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,10" AcceptsReturn="False"/>
             </Grid>
             <Grid Grid.Column="1" Margin="10">
                 <Button x:Name="connectToServer" Content="Connect" FontSize="25" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="50" Margin="5" Click="connectToServer_Click"/>
                 <Button x:Name="sendChat" IsEnabled="False" Content="Send" FontSize="25" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="50" Margin="5,5,5,15" Click="sendChat_Click" IsDefault="False"/>
-            </Grid>            
+                <CheckBox x:Name="enterToSendCheckBox" Content="Enter to Send" FontSize="15" Margin="30,300,30,100" HorizontalAlignment="Center" IsChecked="True" IsEnabled="False" Checked="enterToSendCheckBox_Checked" Unchecked="enterToSendCheckBox_Unchecked" Width="113"/>
+            </Grid>
         </Grid>
-        
+
         <StatusBar HorizontalAlignment="Center" Grid.Row="1" Height="25" VerticalAlignment="Bottom" Width="700">
             <TextBlock Text=" "/>
             <TextBlock x:Name="statusText" Text="STATUS : DISCONNECTED"/>

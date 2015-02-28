@@ -163,12 +163,12 @@ namespace SharpChatConsoleServer
         {
             //  Get IP
             Console.Write("Enter IP to Create Server : ");
-            String serverIPString = Console.ReadLine();
+            String serverIPString = "10.8.101.4";// Console.ReadLine();
             serverIPString = serverIPString.Trim();
 
             //  Get Port
             Console.Write("\nEnter Port to Create Server : ");
-            String serverPortString = Console.ReadLine();
+            String serverPortString = "44";//Console.ReadLine();
             serverPortString = serverPortString.Trim();
 
             try

@@ -4,6 +4,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace SharpChatUIClientVS
 {
@@ -74,7 +76,9 @@ namespace SharpChatUIClientVS
 
                 mainThread = Thread.CurrentThread;
 
-                sc = new Thread(ServerChat);
+                new Thread(ServerChat).Start();
+
+                /*sc = new Thread(ServerChat);
                 sc.Name = "ServerChatThread";
                 sc.IsBackground = false;
                 sc.Start();
@@ -82,7 +86,7 @@ namespace SharpChatUIClientVS
                 extThread = new Thread(threadChecker);
                 extThread.Name = "ThreadCheckerThread";
                 extThread.Start();
-
+                */
             }
             catch (Exception err)
             {
@@ -112,6 +116,7 @@ namespace SharpChatUIClientVS
                 chatWindow.Text += "\n > Me : " + outString;
                 outString = " > " + Environment.MachineName + " : " + outString;
                 outStream = Encoding.ASCII.GetBytes(outString + "$");
+                chatWindow.ScrollToEnd();
             }
             catch (Exception)
             {
@@ -192,6 +197,7 @@ namespace SharpChatUIClientVS
                     this.Dispatcher.Invoke((Action)(() =>
                     {
                         chatWindow.Text += "\n" + inString;
+                        chatWindow.ScrollToEnd();
                     }));
                 }
                 catch (Exception)
@@ -203,20 +209,75 @@ namespace SharpChatUIClientVS
 
         private void changeAllChatItemsTo(bool toChange)
         {
-            sendChat.IsEnabled = toChange;
-            chatInputWindow.IsReadOnly = !toChange;
-            sendChat.IsDefault = true;
-            if (toChange)
-                statusText.Text = "STATUS : CONNECTED TO " + serverIP.Text + ":" + serverPort.Text;
-            else
-                statusText.Text = "STATUS : DISCONNECTED";
+            try
+            {
+                sendChat.IsEnabled = toChange;
+                chatInputWindow.IsReadOnly = !toChange;
+                sendChat.IsDefault = true;
+                enterToSendCheckBox.IsEnabled = toChange;
+                if (toChange)
+                    statusText.Text = "STATUS : CONNECTED TO " + serverIP.Text + ":" + serverPort.Text;
+                else
+                    statusText.Text = "STATUS : DISCONNECTED";
+            }
+            catch (Exception err)
+            {
+                String error = String.Format("Unknown Exception of Type : {0}", err.Message);
+                MessageBox.Show(error, "Attention");
+                return;
+            }
         }
 
         private void changeAllConnectionItemsTo(bool toChange)
         {
-            serverIP.IsEnabled = toChange;
-            serverPort.IsEnabled = toChange;
-            connectToServer.IsEnabled = toChange;
+            try
+            {
+                serverIP.IsEnabled = toChange;
+                serverPort.IsEnabled = toChange;
+                connectToServer.IsEnabled = toChange;
+            }
+            catch (Exception err)
+            {
+                String error = String.Format("Unknown Exception of Type : {0}", err.Message);
+                MessageBox.Show(error, "Attention");
+                return;
+            }
+        }
+
+        private void enterToSendCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                chatInputWindow.AcceptsReturn = false;
+            }
+            catch (Exception err)
+            {
+                String error = String.Format("Unknown Exception of Type : {0}", err.Message);
+                MessageBox.Show(error, "Attention");
+                return;
+            }
+        }
+
+        private void enterToSendCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                chatInputWindow.AcceptsReturn = true;
+            }
+            catch (Exception err)
+            {
+                String error = String.Format("Unknown Exception of Type : {0}", err.Message);
+                MessageBox.Show(error, "Attention");
+                return;
+            }
         }
     }
 }
+/*
+catch(Exception err)
+            {
+                String error = String.Format("Unknown Exception of Type : {0}", err.Message); 
+                MessageBox.Show(error, "Attention");
+                return;
+            }
+ */
