@@ -33,7 +33,9 @@ namespace SharpChatUIClientVS
         {
             try
             {
-                clientSocket.Connect(serverIP.Text, Int32.Parse(serverPort.Text));
+                clientSocket.Close();
+                clientSocket = new TcpClient();
+                clientSocket.Connect(serverIP.Text.Trim(), Int32.Parse(serverPort.Text.Trim()));
                 status = STATUS.CONNECTED;
             }
             catch(FormatException)
@@ -46,9 +48,10 @@ namespace SharpChatUIClientVS
                 MessageBox.Show("No connection to the host has been made!\nCheck You LAN.", "Attention");
                 return;
             }
-            catch(Exception)
+            catch(Exception err)
             {
-                MessageBox.Show("Seems like IP or Port are not in Correct Format!", "Attention");
+                String error = String.Format("Unknown Exception of Type : {0}", err.Message); 
+                MessageBox.Show(error, "Attention");
                 return;
             }
             changeAllConnectionItemsTo(false);
@@ -81,95 +84,14 @@ namespace SharpChatUIClientVS
                 extThread.Start();
 
             }
-            catch(Exception)
+            catch (Exception err)
             {
-                MessageBox.Show("Unknown Error Occurred.\nPlease Connect Again", "Error");
-
+                String error = String.Format("Unknown Exception of Type : {0}", err.Message);
+                MessageBox.Show(error, "Attention");
                 changeAllConnectionItemsTo(true);
                 changeAllChatItemsTo(false);
             }
             chatWindow.Text = "";
-        }
-
-        private void threadChecker()
-        {
-            while (true)
-            {
-                if (!mainThread.IsAlive)
-                {
-                    sc.Abort();
-                    break;
-                }
-                Thread.Sleep(1900);
-            }
-        }
-
-        private void ServerChat()
-        {
-            while (true)
-            {
-                if (status == STATUS.DISCONNECTED)
-                {
-                    MessageBox.Show("Connection has been closed or Server is down.\nPlease Connect Again after Some Time", "Error");
-                    Thread.CurrentThread.Abort();
-                }
-                byte[] inStream = new byte[10025];
-                string inString = null;
-
-                try
-                {
-                    networkStream.ReadTimeout = 100;
-                    networkStream.Read(inStream, 0, inStream.Length);
-
-                    inString = Encoding.ASCII.GetString(inStream);
-                    inString = inString.Substring(0, inString.IndexOf('$'));
-                }
-                catch (ArgumentException) 
-                {
-                    //  Do Nothing
-                    continue;
-                }
-                catch (IOException)
-                {
-                    //  Do Nothing
-                    continue;
-                }
-                catch (Exception)
-                {
-                    status = STATUS.DISCONNECTED;
-                    continue;
-                }
-                inString = inString.Trim();
-                try
-                {
-                    this.Dispatcher.Invoke((Action)(() =>
-                    {
-                        chatWindow.Text += "\n" + inString;
-                    }));
-                }
-                catch(Exception)
-                {
-                    //  Main thread exited
-                }
-            }
-        }
-
-        private void changeAllChatItemsTo(bool toChange)
-        {
-            sendChat.IsEnabled = toChange;
-            chatInputWindow.IsReadOnly = !toChange;
-            sendChat.IsDefault = true;
-            if (toChange)
-                statusText.Text = "STATUS : CONNECTED TO " + serverIP.Text + ":" + serverPort.Text;
-            else
-                statusText.Text = "STATUS : DISCONNECTED";
-        }
-
-        private void changeAllConnectionItemsTo(bool toChange)
-        {
-            serverIP.IsEnabled = toChange;
-            serverPort.IsEnabled = toChange;
-            connectToServer.IsEnabled = toChange;
         }
 
         private void sendChat_Click(object sender, RoutedEventArgs e)
@@ -205,6 +127,96 @@ namespace SharpChatUIClientVS
                 status = STATUS.DISCONNECTED;
             }
             chatInputWindow.Text = "";
+        }
+
+        private void threadChecker()
+        {
+            try
+            {
+                while (true)
+                {
+                    if (!mainThread.IsAlive)
+                    {
+                        sc.Abort();
+                        break;
+                    }
+                    Thread.Sleep(1900);
+                }
+            }
+            catch (Exception err)
+            {
+                String error = String.Format("Unknown Exception of Type : {0}", err.Message);
+                MessageBox.Show(error, "Attention");
+                return;
+            }
+        }
+
+        private void ServerChat()
+        {
+            while (true)
+            {
+                if (status == STATUS.DISCONNECTED)
+                {
+                    MessageBox.Show("Connection has been closed or Server is down.\nPlease Connect Again after Some Time", "Error");
+                    Thread.CurrentThread.Abort();
+                }
+                byte[] inStream = new byte[10025];
+                string inString = null;
+
+                try
+                {
+                    networkStream.ReadTimeout = 100;
+                    networkStream.Read(inStream, 0, inStream.Length);
+
+                    inString = Encoding.ASCII.GetString(inStream);
+                    inString = inString.Substring(0, inString.IndexOf('$'));
+                }
+                catch (ArgumentException)
+                {
+                    //  Do Nothing
+                    continue;
+                }
+                catch (IOException)
+                {
+                    //  Do Nothing
+                    continue;
+                }
+                catch (Exception)
+                {
+                    status = STATUS.DISCONNECTED;
+                    continue;
+                }
+                inString = inString.Trim();
+                try
+                {
+                    this.Dispatcher.Invoke((Action)(() =>
+                    {
+                        chatWindow.Text += "\n" + inString;
+                    }));
+                }
+                catch (Exception)
+                {
+                    //  Main thread exited
+                }
+            }
+        }
+
+        private void changeAllChatItemsTo(bool toChange)
+        {
+            sendChat.IsEnabled = toChange;
+            chatInputWindow.IsReadOnly = !toChange;
+            sendChat.IsDefault = true;
+            if (toChange)
+                statusText.Text = "STATUS : CONNECTED TO " + serverIP.Text + ":" + serverPort.Text;
+            else
+                statusText.Text = "STATUS : DISCONNECTED";
+        }
+
+        private void changeAllConnectionItemsTo(bool toChange)
+        {
+            serverIP.IsEnabled = toChange;
+            serverPort.IsEnabled = toChange;
+            connectToServer.IsEnabled = toChange;
         }
     }
 }

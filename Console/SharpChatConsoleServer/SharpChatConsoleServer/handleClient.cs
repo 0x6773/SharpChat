@@ -125,9 +125,10 @@ namespace SharpChatConsoleServer
                 var networkStream = this.clientSocket.GetStream();
                 networkStream.Write(outStream, 0, outStream.Length);
             }
-            catch (Exception)
+            catch (Exception err)
             {
-                //  Unknown Error
+                String error = String.Format("Unknown Exception of Type : {0}", err.Message);
+                Console.WriteLine(error);
             }
         }
     }

@@ -33,9 +33,10 @@ namespace SharpChatConsoleServer
                 else
                     toBeSent = true;
             }
-            catch(Exception)
+            catch (Exception err)
             {
-                //  Unknown Exception
+                String error = String.Format("Unknown Exception of Type : {0}", err.Message);
+                Console.WriteLine(error);
             }
         }
 
@@ -55,9 +56,10 @@ namespace SharpChatConsoleServer
                 Console.WriteLine("Server ShutDown...");
                 Environment.Exit(0);
             }
-            catch (Exception)
+            catch (Exception err)
             {
-                Console.WriteLine("A Problem Occurred and Requested Operation Cannot be completed");
+                String error = String.Format("Unknown Exception of Type : {0}", err.Message);
+                Console.WriteLine(error);
             }
         }
 
@@ -73,9 +75,10 @@ namespace SharpChatConsoleServer
                     "Type \"/showall\" to show names of all connected clients \n\n" +
                     "More Commands coming soon.\n\n");
             }
-            catch(Exception)
+            catch (Exception err)
             {
-                //  Unknown Exception
+                String error = String.Format("Unknown Exception of Type : {0}", err.Message);
+                Console.WriteLine(error);
             }
         }
 
@@ -91,12 +94,34 @@ namespace SharpChatConsoleServer
                     viewHelp();
                 else if (tempList[0].ToUpper() == "SHUTDOWN")
                     shutdown();
+                else if (tempList[0].ToUpper() == "SHOWALL")
+                    showall();
                 else
                     toBeSent = true;
             }
             catch(Exception)
             {
                 toBeSent = true;
+            }
+        }
+
+        //  Show all connected Clients
+        private static void showall()
+        {
+            try
+            {
+                StringBuilder toShow = new StringBuilder("\n--- Connected Clients ---\n\n");
+                foreach (var clients in Server.clientsList)
+                {
+                    toShow.AppendFormat("{0}\n", clients.MachineName);
+                }
+                toShow.AppendFormat("\nTotal Number of clients Connected : {0}\n-----------------------------------\n", Server.clientsList.Count);
+                Console.WriteLine(toShow.ToString());
+            }
+            catch (Exception err)
+            {
+                String error = String.Format("Unknown Exception of Type : {0}", err.Message);
+                Console.WriteLine(error);
             }
         }
 
@@ -128,7 +153,7 @@ namespace SharpChatConsoleServer
     class Server
     {
         //  HashSet<> Storing Data of All Clients
-        static List<Client> clientsList = new List<Client>();
+        public static List<Client> clientsList = new List<Client>();
 
         //  TcpLister for Server
         static TcpListener serverSocket { get; set; }
@@ -171,9 +196,10 @@ namespace SharpChatConsoleServer
                 Console.ReadKey();
                 Environment.Exit(0);
             }
-            catch(Exception)
+            catch (Exception err)
             {
-                //  Unknown Exception
+                String error = String.Format("Unknown Exception of Type : {0}", err.Message);
+                Console.WriteLine(error);
             }
 
             Console.WriteLine("\nServer Started at IP : {0}, Port : {1}", serverIPString, serverPortString);
@@ -195,9 +221,10 @@ namespace SharpChatConsoleServer
                 Console.ReadKey();
                 Environment.Exit(0);
             }
-            catch(Exception)
+            catch (Exception err)
             {
-                //  Unknown Exception
+                String error = String.Format("Unknown Exception of Type : {0}", err.Message);
+                Console.WriteLine(error);
             }
         }
 
@@ -227,9 +254,10 @@ namespace SharpChatConsoleServer
             {
                 clientsList.Remove(toDeleteClient);
             }
-            catch(Exception)
+            catch (Exception err)
             {
-                //  Unknown Exception
+                String error = String.Format("Unknown Exception of Type : {0}", err.Message);
+                Console.WriteLine(error);
             }
         }
 
