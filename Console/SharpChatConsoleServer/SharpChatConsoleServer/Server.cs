@@ -253,6 +253,8 @@ namespace SharpChatConsoleServer
             try
             {
                 clientsList.Remove(toDeleteClient);
+                toDeleteClient.clientSocket.GetStream().Close();
+                toDeleteClient.clientSocket.Close();                
             }
             catch (Exception err)
             {
