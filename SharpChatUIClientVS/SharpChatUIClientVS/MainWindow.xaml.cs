@@ -1,12 +1,19 @@
-﻿using System;
+﻿﻿/*
+ *  SharpChat UI for Client
+ *  https://github.com/mafiya69/SharpChat.git
+ * 
+ * Copyright (c) 2015 Govind Sahai (mafiya69)
+ * Licensed under the MIT license.
+ * 
+ */
+
+using System;
 using System.IO;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace SharpChatUIClientVS
 {
@@ -245,6 +252,21 @@ namespace SharpChatUIClientVS
             try
             {
                 chatInputWindow.AcceptsReturn = true;
+            }
+            catch (Exception err)
+            {
+                String error = String.Format("Unknown Exception of Type : {0}", err.Message);
+                MessageBox.Show(error, "Attention");
+                return;
+            }
+        }
+
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                String about = "Made by : Govind Sahai\nGH : https://github.com/mafiya69/SharpChat.git \nStudent at Indian Institute of Technology\nBHU, Varanasi";
+                MessageBox.Show(about, "About");
             }
             catch (Exception err)
             {
