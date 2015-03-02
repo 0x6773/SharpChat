@@ -1,8 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="client/Main.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Server/handleClient.cs">
     <Files>
-      <File FileName="client/Main.cs" Line="19" Column="19" />
+      <File FileName="Server/Server.cs" Line="40" Column="40" />
+      <File FileName="Server/handleClient.cs" Line="40" Column="40" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

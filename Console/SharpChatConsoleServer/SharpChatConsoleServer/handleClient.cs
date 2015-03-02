@@ -1,3 +1,12 @@
+﻿﻿/*
+ *  SharpChat Console for Server
+ *  https://github.com/mafiya69/SharpChat.git
+ * 
+ * Copyright (c) 2015 Govind Sahai (mafiya69)
+ * Licensed under the MIT license.
+ * 
+ */
+
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
