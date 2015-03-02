@@ -161,47 +161,53 @@ namespace SharpChatConsoleServer
         //  Main Method
         static void Main(string[] args)
         {
-            //  Get IP
-            Console.Write("Enter IP to Create Server : ");
-            String serverIPString = "10.8.101.4";// Console.ReadLine();
-            serverIPString = serverIPString.Trim();
+            String serverIPString = null;
+            String serverPortString = null;
+            while (true)
+            {
+                //  Get IP
+                Console.Write("Enter IP to Create Server : ");
+                serverIPString = Console.ReadLine();
+                serverIPString = serverIPString.Trim();
 
-            //  Get Port
-            Console.Write("\nEnter Port to Create Server : ");
-            String serverPortString = "44";//Console.ReadLine();
-            serverPortString = serverPortString.Trim();
+                //  Get Port
+                Console.Write("\nEnter Port to Create Server : ");
+                serverPortString =Console.ReadLine();
+                serverPortString = serverPortString.Trim();
 
-            try
-            {
-                IPAddress serverIP = IPAddress.Parse(serverIPString);
-                serverSocket = new TcpListener(serverIP, Int32.Parse(serverPortString));
+                try
+                {
+                    IPAddress serverIP = IPAddress.Parse(serverIPString);
+                    serverSocket = new TcpListener(serverIP, Int32.Parse(serverPortString));
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("\nEither IP or Port or both are not in correct Format." +
+                        "Press Any Key to enter again...\n\n");
+                    Console.ReadKey();
+                    continue;
+                }
+                try
+                {
+                    //  Starting TcpLister
+                    serverSocket.Start();
+                    break;
+                }
+                catch (SocketException)
+                {
+                    Console.WriteLine("\nError Occurred in Creating Server!\n" +
+                        "Try Changing IP Address or Port or both.\n" +
+                        "Press Any Key to change IP/Port...\n\n");
+                    Console.ReadKey();
+                    continue;
+                }
+                catch (Exception err)
+                {
+                    String error = String.Format("Unknown Exception of Type : {0}", err.Message);
+                    Console.WriteLine(error);
+                    break;
+                }
             }
-            catch(Exception)
-            {
-                Console.WriteLine("\nEither IP or Port or both are not in correct Format." +
-                    "Press Any Key to exit...\n");
-                Console.ReadKey();
-                Environment.Exit(0);
-            }
-            try
-            {
-                //  Starting TcpLister
-                serverSocket.Start();
-            }
-            catch(SocketException)
-            {
-                Console.WriteLine("\nError Occurred in Creating Server!\n" +
-                    "Try Changing IP Address or Port or both.\n" +
-                    "Press Any Key to exit...\n");
-                Console.ReadKey();
-                Environment.Exit(0);
-            }
-            catch (Exception err)
-            {
-                String error = String.Format("Unknown Exception of Type : {0}", err.Message);
-                Console.WriteLine(error);
-            }
-
             Console.WriteLine("\nServer Started at IP : {0}, Port : {1}", serverIPString, serverPortString);
             try
             {
@@ -209,16 +215,13 @@ namespace SharpChatConsoleServer
                 new Thread(getClientConnection).Start();
                 new Thread(ServerChat).Start();
             }
-            catch (ThreadStateException)
-            {
-                Console.WriteLine("\nThe Thread Has already been started. Cannot Start Again.");
-            }
             catch(OutOfMemoryException)
             {
                 Console.WriteLine("\nOutOfMemoryException Thrown.\n" +
                     "There is not enough memory available to start this Process.\n" +
                     "Press Any Key To exit...");
                 Console.ReadKey();
+                serverSocket.Server.Close();
                 Environment.Exit(0);
             }
             catch (Exception err)
@@ -239,10 +242,10 @@ namespace SharpChatConsoleServer
                     Client newClient = new Client(clientSocket);
                     clientsList.Add(newClient);
                 }
-                catch(Exception)
+                catch (Exception err)
                 {
-                    Console.WriteLine("\nUnknown Error Occurred\n" +
-                        "If you often seeing this Message, Please Restart Server");
+                    String error = String.Format("Unknown Exception of Type : {0}", err.Message);
+                    Console.WriteLine(error);
                 }
             }
         }
@@ -271,6 +274,7 @@ namespace SharpChatConsoleServer
                 var tempHL = clientsList.Find(s => s.MachineName == clientName);
                 deleteClientConnection(tempHL);
                 tempHL.status = Client.STATUS.KICKED;
+                tempHL.clientSocket.GetStream().Close();
                 tempHL.clientSocket.Close();
                 Console.WriteLine("--- " + tempHL.MachineName + " KICKED ---");
                 Server.broadcastInputString("--- " + tempHL.MachineName + " KICKED ---$", tempHL);
@@ -311,10 +315,10 @@ namespace SharpChatConsoleServer
                 {
                     Console.WriteLine("\nError Reading/Writing to Console.");
                 }
-                catch(Exception)
+                catch (Exception err)
                 {
-                    Console.WriteLine("\nUnknown Error Occurred\n" +
-                        "If you ofter seeing this Message, Please Restart Server");
+                    String error = String.Format("Unknown Exception of Type : {0}", err.Message);
+                    Console.WriteLine(error);
                 }
             }
         }
