@@ -152,7 +152,7 @@ namespace SharpChatConsoleServer
     //  Class Server
     class Server
     {
-        //  HashSet<> Storing Data of All Clients
+        //  List<> Storing Data of All Clients
         public static List<Client> clientsList = new List<Client>();
 
         //  TcpLister for Server
