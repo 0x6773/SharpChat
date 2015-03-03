@@ -124,7 +124,24 @@ namespace SharpChatConsoleServer
             }
         }
 
-        //  Send Message to Client from Server
+        //  Send Message to Client from Server in string
+        public void FromServerChat(String outString)
+        {
+            try
+            {
+                if (status == STATUS.DISCONNECTED)
+                    Server.deleteClientConnection(this);
+                var outStream = Encoding.ASCII.GetBytes(outString);
+                this.FromServerChat(outStream);
+            }
+            catch (Exception err)
+            {
+                String error = String.Format("Unknown Exception of Type : {0}", err.Message);
+                Console.WriteLine(error);
+            }
+        }
+
+        //  Send Message to Client from Server in byte[]
         public void FromServerChat(byte[] outStream)
         {
             if (status == STATUS.DISCONNECTED)
