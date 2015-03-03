@@ -7,6 +7,7 @@
  * 
  */
 
+using System;
 using System.Windows;
 
 namespace SharpChatUIClientVS
@@ -19,6 +20,22 @@ namespace SharpChatUIClientVS
         public ConnectionSettings()
         {
             InitializeComponent();
+            serverPort.Text = ConnectionData.serverPortString;
+            serverIP.Text = ConnectionData.serverIPString;
+        }
+
+        private void okButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                ConnectionData.serverIPString = serverIP.Text;
+                ConnectionData.serverPortString = serverPort.Text;
+                this.Close();
+            }
+            catch(Exception)
+            {
+
+            }
         }
     }
 }

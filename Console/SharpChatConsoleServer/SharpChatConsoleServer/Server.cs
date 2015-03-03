@@ -33,10 +33,10 @@ namespace SharpChatConsoleServer
                 else
                     toBeSent = true;
             }
-            catch (Exception err)
+            catch (Exception)
             {
-                String error = String.Format("Unknown Exception of Type : {0}", err.Message);
-                Console.WriteLine(error);
+                //  Do nothing
+                return;
             }
         }
 
@@ -48,9 +48,13 @@ namespace SharpChatConsoleServer
                 Server.broadcastInputString("The Server is going to shut down in$");
                 for (int i = 10; i > 0; --i)
                 {
-                    Server.broadcastInputString(i.ToString() + " sec...$");
-                    Console.WriteLine(i.ToString() + " sec...");
+                    Server.broadcastInputString("Closing in " + i.ToString() + " sececond(s)$");
+                    Console.WriteLine("Closing in " + i.ToString() + " sececond(s)");
                     Thread.Sleep(990);
+                }
+                foreach (var clients in Server.clientsList)
+                {
+                    clients.FromServerChat("%%STOP%%$");
                 }
                 Server.broadcastInputString("Server ShutDown...$");
                 Console.WriteLine("Server ShutDown...");
@@ -167,12 +171,12 @@ namespace SharpChatConsoleServer
             {
                 //  Get IP
                 Console.Write("Enter IP to Create Server : ");
-                serverIPString = Console.ReadLine();
+                serverIPString = "127.0.0.1";// Console.ReadLine();
                 serverIPString = serverIPString.Trim();
 
                 //  Get Port
                 Console.Write("\nEnter Port to Create Server : ");
-                serverPortString =Console.ReadLine();
+                serverPortString = "6969";// Console.ReadLine();
                 serverPortString = serverPortString.Trim();
 
                 try
@@ -256,8 +260,9 @@ namespace SharpChatConsoleServer
             try
             {
                 clientsList.Remove(toDeleteClient);
+                toDeleteClient.FromServerChat("%%STOP%%$");
                 toDeleteClient.clientSocket.GetStream().Close();
-                toDeleteClient.clientSocket.Close();                
+                toDeleteClient.clientSocket.Close();
             }
             catch (Exception err)
             {
@@ -272,6 +277,8 @@ namespace SharpChatConsoleServer
             try 
             {
                 var tempHL = clientsList.Find(s => s.MachineName == clientName);
+                if (tempHL == null)
+                    throw new Exception();
                 deleteClientConnection(tempHL);
                 tempHL.status = Client.STATUS.KICKED;
                 tempHL.clientSocket.GetStream().Close();

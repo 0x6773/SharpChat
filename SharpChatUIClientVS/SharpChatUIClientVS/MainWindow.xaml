@@ -6,25 +6,14 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="6*"/>
         </Grid.RowDefinitions>
 
         <Menu IsMainMenu="True" Grid.Row="0">
-            <MenuItem Header="_Connect"/>
+            <MenuItem Header="_Connect" Click="MenuItem_Click"/>
             <MenuItem Header="_About" Click="MenuItem_Click_1"/>
         </Menu>
-
-        <Grid Grid.Row="1" Margin="20,10,10,10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="Server IP: " Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="25"/>
-            <TextBox x:Name="serverIP" Text="10.8.101.4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Center" FontSize="25" Width="170" IsEnabled="True" Margin="0,0,20,0"/>
-            <TextBlock Text="Server Port: " Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="25"/>
-            <TextBox x:Name="serverPort" Text="44" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Center" FontSize="25" Width="150" IsEnabled="True" Margin="0,0,20,0"/>
-        </Grid>
 
         <Grid Grid.Row="2" Margin="10,10,10,30">
             <Grid.ColumnDefinitions>

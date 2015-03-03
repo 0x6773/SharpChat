@@ -36,11 +36,11 @@ namespace SharpChatConsoleClient
         static void Main(string[] args)
         {            
             Console.Write("Enter IP to Connect to Server : ");
-            String serverIPString = Console.ReadLine();
+            String serverIPString = "127.0.0.1";// Console.ReadLine();
             serverIPString = serverIPString.Trim();
 
             Console.Write("\nEnter Port to Connect to Server : ");
-            String serverPortString = Console.ReadLine();
+            String serverPortString = "6969";// Console.ReadLine();
             serverPortString = serverPortString.Trim();
 
             try
@@ -176,7 +176,17 @@ namespace SharpChatConsoleClient
                     status = STATUS.DISCONNECTED;
                     continue;
                 }
-                inString = inString.Trim();
+                try
+                {
+                    inString = inString.Trim();
+                    if (inString == "%%STOP%%")
+                        throw new Exception();
+                }
+                catch(Exception)
+                {
+                    status = STATUS.DISCONNECTED;
+                    continue;
+                }
                 Console.WriteLine(inString);
             }
         }
